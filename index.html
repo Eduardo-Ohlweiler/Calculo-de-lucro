@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calcular valor do Drink</title>
+    <style>
+        input[readonly="1"] {
+            background: #e0e0e0;
+            border: 1px solid #b0b0b0;
+        }
+
+        form {
+            display: table;
+            border: 1px solid #888;
+            width: 80%;
+            padding: 10px;
+        }
+
+        form>label,
+        form>input,
+        form>select {
+            float: left;
+            margin-top: 5px;
+            padding-top: 4px;
+            padding-bottom: 4px;
+        }
+
+        form>label {
+            clear: both;
+            width: 25%;
+            font-family: 'Open Sans';
+            font-weight: bold;
+        }
+
+        form>input[type="submit"] {
+            margin-left: 25%;
+            clear: both;
+        }
+    </style>
+</head>
+
+<body>
+    <section>
+        <form action="" id="form1">
+            <label for="">Informe a bebida</label>
+            <input type="text" id="bottleName" required style="width: 30%;">
+
+            <label for="">Informe o valor da garrafa: </label>
+            <input type="number" id="bottlePrice" required style="width: 10%;">
+
+            <label for="">Quantos ml a garrafa possui: </label>
+            <input type="number" id="bottleMl" required style="width: 10%;">
+
+            <label for="">Informe o nome do drink: </label>
+            <input type="text" id="drinkName" required style="width: 30%;">
+
+            <label for="">Quantos ml serão usados no drink: </label>
+            <input type="number" id="drinkMl" required style="width: 10%;">
+
+            <label for="">% de lucro desejado: </label>
+            <input type="number" id="margemLucroPerc" style="width: 10%;">
+
+            <label for="">Reais de lucro desejado: </label>
+            <input type="number" id="margemLucroReais" style="width: 10%;">
+        </form>
+
+        <form action="" id="form2">
+            <label for="">Informe a bebida</label>
+            <input type="text" id="bottleName2" style="width: 30%;">
+
+            <label for="">Informe o valor da garrafa: </label>
+            <input type="number" id="bottlePrice2" style="width: 10%;">
+
+            <label for="">Quantos ml a garrafa possui: </label>
+            <input type="number" id="bottleMl2" style="width: 10%;">
+
+            <label for="">Quantos ml serão usados no drink: </label>
+            <input type="number" id="drinkMl2" style="width: 10%;">
+
+            <label for="">% de lucro desejado: </label>
+            <input type="number" id="margemLucroPerc2" style="width: 10%;">
+
+            <label for="">Reais de lucro desejado: </label>
+            <input type="number" id="margemLucroReais2" style="width: 10%;">
+        </form>
+
+        <form action="" id="form3">
+            <label for="">Bebida complementar</label>
+            <input type="text" id="bebidaAdicional">
+
+            <label for="">Preço de venda</label>
+            <input type="number" id="complementDrink">
+        </form>
+    </section>
+
+    <section>
+        <form action="" id="form4">
+            <input type="submit" value="Calcular">
+
+            <label for="">Valor calculado de venda: </label>
+            <input type="text" id="sellPrice" style="width: 10%;" readonly="1">
+        </form>
+    </section>
+
+    <script>
+        const form1 = document.getElementById("form1");
+        const form2 = document.getElementById("form2");
+        const form3 = document.getElementById("form3");
+
+        const garrafaPreco = document.getElementById("bottlePrice");
+        const litragemGarrafa = document.getElementById("bottleMl");
+        const mlGastoDrink = document.getElementById("drinkMl");
+        const margemLucroPerc = document.getElementById("margemLucroPerc");
+        const margemLucroReal = document.getElementById("margemLucroReais");
+
+        const garrafaPreco2 = document.getElementById("bottlePrice2");
+        const litragemGarrafa2 = document.getElementById("bottleMl2");
+        const mlGastoDrink2 = document.getElementById("drinkMl2");
+        const margemLucroPerc2 = document.getElementById("margemLucroPerc2");
+        const margemLucroReal2 = document.getElementById("margemLucroReais2");
+
+        const bebidaComplementar = document.getElementById("bebidaAdicional");
+        const complementoPreco = document.getElementById("complementDrink");
+
+        form4.addEventListener("submit", function (evento) {
+            evento.preventDefault();
+
+            // Função para verificar se o campo está vazio
+            function isEmpty(value) {
+                return value === null || value === undefined || value === '' || value.length === 0;
+            }
+
+            // Função para identificar o tipo de lucro desejado (percentual ou reais)
+            function lucroFormaEsperado() {
+                if (!isEmpty(margemLucroPerc.value)) {
+                    return { tipo: 'percentual', valor: parseFloat(margemLucroPerc.value) };
+                } else if (!isEmpty(margemLucroReal.value)) {
+                    return { tipo: 'reais', valor: parseFloat(margemLucroReal.value) };
+                } else {
+                    return null;
+                }
+            }
+
+            // Função para calcular o preço de venda de um drink
+            function calculeLucroMl(garrafaPreco, litragemGarrafa, mlGastoDrink, lucroInfo) {
+                if (!lucroInfo) return 0;
+
+                const preco = parseFloat(garrafaPreco.value);
+                const litragem = parseFloat(litragemGarrafa.value);
+                const mlGasto = parseFloat(mlGastoDrink.value);
+
+                if (isNaN(preco) || isNaN(litragem) || isNaN(mlGasto)) return 0;
+
+                const custoPorMl = preco / litragem;
+                const custoDoDrink = custoPorMl * mlGasto;
+
+                let lucroFinal = 0;
+
+                if (lucroInfo.tipo === 'percentual') {
+                    lucroFinal = custoDoDrink + (custoDoDrink * lucroInfo.valor / 100);
+                } else if (lucroInfo.tipo === 'reais') {
+                    lucroFinal = custoDoDrink + lucroInfo.valor;
+                }
+
+                return lucroFinal;
+            }
+
+            // Calcula o lucro de cada bebida
+            const lucroInfo1 = lucroFormaEsperado();
+            const lucroBebida1 = calculeLucroMl(garrafaPreco, litragemGarrafa, mlGastoDrink, lucroInfo1);
+
+            const lucroInfo2 = lucroFormaEsperado();
+            const lucroBebida2 = calculeLucroMl(garrafaPreco2, litragemGarrafa2, mlGastoDrink2, lucroInfo2);
+
+            // Calcula o preço de venda final
+            const precoVenda = lucroBebida1 + lucroBebida2 + (bebidaComplementar.value !== "" ? parseFloat(complementoPreco.value) : 0);
+            document.getElementById("sellPrice").value = precoVenda.toFixed(2);
+
+        });
+    </script>
+</body>
+
+</html>
